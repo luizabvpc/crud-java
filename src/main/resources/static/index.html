@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>CRUD de Animais</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <h1>🐾 CRUD de Animais 🐾</h1>
+
+    <!-- Cadastrar Animal -->
+    <h2>➕ Cadastrar Animal</h2>
+    <input type="text" id="nome" placeholder="Nome do Animal">
+    <input type="text" id="raca" placeholder="Raça do Animal">
+    <input type="number" id="idade" placeholder="Idade do Animal">
+    <button onclick="criar()">Salvar 🐶</button>
+
+    <hr>
+
+    <!-- Buscar Animal -->
+    <h2>🔎 Buscar Animal</h2>
+    <input type="text" id="buscarNome" placeholder="Nome do Animal">
+    <button onclick="buscar()">Buscar 🐱</button>
+    <pre id="resultadoBuscar"></pre>
+
+    <hr>
+
+    <!-- Deletar Animal -->
+    <h2>🗑️ Deletar Animal</h2>
+    <input type="text" id="deletarNome" placeholder="Nome do Animal">
+    <button onclick="deletar()">Deletar 🐢</button>
+
+    <hr>
+
+    <!-- Atualizar Animal -->
+    <h2>✏️ Atualizar Animal</h2>
+    <input type="number" id="id" placeholder="ID do Animal">
+    <input type="text" id="novoNome" placeholder="Novo Nome">
+    <input type="text" id="novaRaca" placeholder="Nova Raça">
+    <input type="number" id="novaIdade" placeholder="Nova Idade">
+    <button onclick="atualizar()">Atualizar 🦜</button>
+</div>
+
+<script>
+    const api = "/animal";
+
+    async function criar() {
+        const resp = await fetch(api, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                nome: document.getElementById("nome").value,
+                raca: document.getElementById("raca").value,
+                idade: parseInt(document.getElementById("idade").value)
+            })
+        });
+        alert(resp.ok ? "Animal cadastrado com sucesso! 🐾" : "Erro ao cadastrar!");
+    }
+
+    async function buscar() {
+        const nome = document.getElementById("buscarNome").value;
+        const resp = await fetch(`${api}?nome=${encodeURIComponent(nome)}`);
+        if (resp.ok) {
+            const data = await resp.json();
+            document.getElementById("resultadoBuscar").innerText = JSON.stringify(data, null, 2);
+        } else {
+            document.getElementById("resultadoBuscar").innerText = "Animal não encontrado 😿";
+        }
+    }
+
+    async function deletar() {
+        const nome = document.getElementById("deletarNome").value;
+        const resp = await fetch(`${api}?nome=${encodeURIComponent(nome)}`, { method: "DELETE" });
+        alert(resp.ok ? "Animal deletado! 🐢" : "Erro ao deletar!");
+    }
+
+    async function atualizar() {
+        const id = document.getElementById("id").value;
+        const resp = await fetch(`${api}?id=${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                nome: document.getElementById("novoNome").value,
+                raca: document.getElementById("novaRaca").value,
+                idade: parseInt(document.getElementById("novaIdade").value)
+            })
+        });
+        alert(resp.ok ? "Animal atualizado! 🦜" : "Erro ao atualizar!");
+    }
+</script>
+</body>
+</html>
